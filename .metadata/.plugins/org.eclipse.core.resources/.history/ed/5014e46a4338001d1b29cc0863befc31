@@ -1,0 +1,81 @@
+package com.miniproject;
+
+import java.awt.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
+public class Login {
+
+	public static void main(String[] args) throws ClassNotFoundException {
+		Connection con = null;
+		Quiz quiz = new Quiz();
+		ArrayList<StudentInformation> list = new ArrayList<StudentInformation>();
+		Scanner sc = new Scanner(System.in);
+
+		for (int i = 0; i < 3; i++) {
+			System.out.println("Enter your Id");
+            int stdId = sc.nextInt();
+			System.out.println("Enter your Name");
+			String stdName = sc.next();
+
+			StudentInformation student = new StudentInformation(stdId, stdName);
+			list.add(student);
+		}
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		try {
+			 con = DriverManager.getConnection("jdbc:mysql://localhost:3306/user", "root",
+					"Reenaattarde@1997");
+			Map<String, String> map = quiz.fetchQuizeDeta(con);
+			Set<String> keySet = map.keySet();
+			//for(StudentInformation std :list)
+				
+			System.out.println("your quize start");
+			String OPtions = null;
+			int Score = 0;
+			
+			for (String set : keySet) {
+				System.out.println(set);
+				Scanner sc1 = new Scanner(System.in);
+				OPtions = quiz.getAnsOptions(set);
+				System.out.println(OPtions);
+				String answer = sc1.next();
+				if (answer.equals(map.get(set))) {
+					Score++;
+
+				}
+				
+			}// end of for loop
+				//std.setScore(Score);
+
+				if (Score >= 8 && Score <= 10) {
+					System.out.println("Grade=" + "A");
+
+				} else if (Score >= 6 && Score <= 8) {
+					System.out.println("Grade=" + "B");
+
+				} else if (Score == 5) {
+					System.out.println("Grade=" + "C");
+				} else if (Score < 5) {
+					System.out.println("Failed");
+
+				}
+			
+			
+		
+
+		} catch (SQLException e) {
+		}finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+}
+}
